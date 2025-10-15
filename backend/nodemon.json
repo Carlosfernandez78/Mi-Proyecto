@@ -1,0 +1,14 @@
+{
+  "watch": [
+    "app.js",
+    "src",
+    "config/db.js"
+  ],
+  "ext": "js,json",
+  "ignore": [
+    "node_modules",
+    "config/mi_api.sql",
+    "README.md"
+  ]
+}
+

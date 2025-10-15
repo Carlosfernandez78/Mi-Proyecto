@@ -1,0 +1,344 @@
+:root {
+  --fondo-footer-header: rgb(50, 70, 100);
+  --hover-footer-header: rgb(70, 90, 140);
+  --bg: #ffffff;
+  --fg: #111111;
+  --card-bg: rgba(255,255,255,0.08);
+  --card-border: rgba(0,0,0,0.15);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+main {
+  flex: 1; /* ocupa todo el espacio disponible */
+}
+
+/* estilos de /pages <NotFound> */
+/* ---------------------------------------------------------- */
+
+.not-found-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.not-found-container h1 {
+  font-size: 2rem;
+  color: #ff6b6b;
+}
+
+.not-found-image {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.back-home a {
+  text-decoration: none;
+  background-color: var(--fondo-footer-header);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s ease;
+}
+
+.back-home a:hover {
+  background-color: var(--hover-footer-header);
+}
+
+/* estilos de /pages <Home> */
+/* ---------------------------------------------------------- */
+
+.home-page {
+  background: rgba(255, 255, 255, 0.4) url("./assets/background.jpg") no-repeat
+    center center;
+  background-size: cover;
+  background-blend-mode: lighten;
+  min-height: 100%;
+  color: black;
+}
+
+/* estilos de /pages <Books> */
+/* ---------------------------------------------------------- */
+
+.books-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 20px;
+}
+
+
+/* estilos de /pages <Account/Home> */
+/* ---------------------------------------------------------- */
+
+.account-page {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  gap: 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.auth-title {
+  text-align: center;
+  margin: 0 0 12px 0;
+}
+
+.auth {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.formRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Fondo global para todas las páginas */
+body {
+  background-image: url('/imagen/chuttersnap-gts_Eh4g1lk-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* ----------- Campos de la página de cuenta (translúcidos y espaciados) ----------- */
+.auth input,
+.auth select {
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background-color: rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  color: var(--fg);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.auth input::placeholder {
+  color: rgba(255,255,255,0.85);
+}
+
+.auth input:hover,
+.auth select:hover {
+  background-color: rgba(255,255,255,0.22);
+  border-color: var(--hover-footer-header);
+}
+
+.auth input:focus,
+.auth select:focus {
+  outline: none;
+  border-color: var(--hover-footer-header);
+  box-shadow: 0 0 0 2px rgba(70, 90, 140, 0.25);
+}
+
+/* Botones de cuenta (registrarse/login) redondeados y contenidos */
+.auth button[type="submit"] {
+  width: 100%;
+  max-width: 100%;
+  align-self: center;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--fondo-footer-header);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth button[type="submit"]:hover {
+  background-color: var(--hover-footer-header);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Botón Logout con estilo coherente */
+.auth-logout {
+  width: 100%;
+  max-width: 100%;
+  align-self: center;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--fondo-footer-header);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-logout:hover {
+  background-color: var(--hover-footer-header);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Botones Ver/Ocultar contraseña */
+.auth-toggle {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--fondo-footer-header);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-toggle:hover {
+  background-color: var(--hover-footer-header);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* (overlay eliminado) */
+
+/* Modo oscuro automático según preferencia del sistema */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --fg: #e9eef5;
+    --card-bg: rgba(255,255,255,0.06);
+    --card-border: rgba(255,255,255,0.12);
+  }
+}
+
+/* ---------------- Detalle de vehículo (reseñas y reservas) ---------------- */
+.detail-page {
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.detail-card {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.detail-title,
+.detail-summary,
+.detail-card h3 {
+  text-align: center;
+}
+
+.detail-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 20px 0;
+  text-align: center;
+}
+
+.detail-form .field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.detail-form .field input,
+.detail-form .field select,
+.detail-form input[type="date"] {
+  width: min(480px, 100%);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--card-border);
+  background-color: rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  color: var(--fg);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.detail-form .field input::placeholder {
+  color: rgba(255,255,255,0.8);
+}
+
+.detail-form .field input:focus,
+.detail-form .field select:focus,
+.detail-form input[type="date"]:focus {
+  outline: none;
+  border-color: var(--hover-footer-header);
+  box-shadow: 0 0 0 2px rgba(70, 90, 140, 0.25);
+}
+
+.detail-form .field input:hover,
+.detail-form .field select:hover,
+.detail-form input[type="date"]:hover {
+  background-color: rgba(255,255,255,0.22);
+  border-color: var(--hover-footer-header);
+}
+
+/* Botón Volver con esquinas redondeadas */
+.detail-back {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background-color: var(--fondo-footer-header);
+  color: #fff;
+  border-radius: 999px;
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.detail-back:hover {
+  background-color: var(--hover-footer-header);
+}
+
+.detail-message {
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* Botón principal de las acciones del detalle (p. ej., Reservar / Enviar reseña) */
+.detail-form button[type="submit"] {
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background-color: var(--fondo-footer-header);
+  color: #fff;
+  cursor: pointer;
+}
+
+.detail-form button[type="submit"]:hover {
+  background-color: var(--hover-footer-header);
+}
+

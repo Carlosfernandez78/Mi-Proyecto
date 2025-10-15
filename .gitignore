@@ -1,0 +1,33 @@
+# Dependencias
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Entornos
+.env
+.env.local
+.env.*.local
+
+# Sistema/editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Builds y caches
+/dist/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+
+# Cobertura
+coverage/
+
+# Misceláneo
+*.swp
