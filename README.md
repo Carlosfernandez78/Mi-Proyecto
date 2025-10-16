@@ -80,18 +80,43 @@ El esquema SQL de referencia está en `backend/config/mi_api.sql`.
 Asegúrate de importar/crear la base de datos y credenciales acordes a tu `.env`.
 
 ## Endpoints principales (backend)
-- `POST /auth/register`
-- `POST /auth/login`
-- `GET /auth/perfil` (requiere `Authorization: Bearer <token>`)
-- `GET /vehiculos`
-- `GET /vehiculos/:id`
-- `POST /reservas` (según validaciones)
-- `POST /reviews` (según validaciones)
+Prefijo de API: todas las rutas cuelgan de `/api`.
+
+- Auth
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `GET /api/auth/perfil` (requiere `Authorization: Bearer <token>`)
+- Vehículos
+  - `GET /api/vehiculos`
+  - `GET /api/vehiculos/:id`
+  - `DELETE /api/vehiculos/:id` (privado admin)
+- Usuarios (privado admin)
+  - `GET /api/usuarios`
+  - `POST /api/usuarios`
+  - `PUT /api/usuarios/:id`
+  - `DELETE /api/usuarios/:id`
+- Reservas (privado)
+  - `GET /api/reservas` (admin)
+  - `GET /api/reservas/usuario/:id` (autenticado)
+  - `POST /api/reservas` (validaciones activas)
+  - `PUT /api/reservas/:id` (validaciones activas)
+  - `DELETE /api/reservas/:id`
+- Reseñas
+  - `GET /api/resenas/vehiculo/:id_vehiculo` (pública)
+  - `POST /api/resenas` (privada; validaciones activas)
+
+Validaciones con `express-validator` activas en (al menos): auth, reservas, vehículos/usuarios.
 
 ## Notas del frontend
 - Rutas principales en `frontend/src/App.jsx`.
 - Listado de vehículos en `frontend/src/pages/Vehiculos.jsx`.
 - Detalle en `frontend/src/pages/VehiculoDetalle.jsx`.
+- Cuenta (login/registro) en `frontend/src/pages/Home.jsx`.
+
+Accesos y restricciones (didáctico):
+- El detalle de vehículo requiere login (redirige a Cuenta si no hay token).
+- El enlace y la vista de Administración solo aparecen para usuarios con rol `admin`.
+- Desde Administración se puede crear usuarios/vehículos y eliminarlos.
 
 ## Scripts útiles
 ### Backend (en `backend/package.json`)
