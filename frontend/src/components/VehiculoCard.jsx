@@ -6,6 +6,12 @@ export default function VehiculoCard({ vehiculo }) {
   const navigate = useNavigate();
 
   const handleClic = () => {
+    const hasToken = (() => { try { return Boolean(localStorage.getItem('token')) } catch { return false } })();
+    if (!hasToken) {
+      alert('Debes iniciar sesión para ver el detalle');
+      navigate('/cuenta');
+      return;
+    }
     if (id) navigate(`/vehiculos/${id}`);
   };
 

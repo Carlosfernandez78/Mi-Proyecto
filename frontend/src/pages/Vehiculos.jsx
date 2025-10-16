@@ -15,7 +15,7 @@ function Vehiculos() {
   useEffect(() => {
     async function fetchVehiculos() {
       try {
-        const res = await fetch(`${API_URL}/vehiculos`)
+        const res = await fetch(`${API_URL}/api/vehiculos`)
         if (!res.ok) throw new Error('Error cargando vehículos')
         const data = await res.json()
         const archivosPorId = {

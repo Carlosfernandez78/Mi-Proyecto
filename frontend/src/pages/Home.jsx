@@ -24,11 +24,12 @@ export default function Home() {
       const token = localStorage.getItem('token')
       if (!token) return
       try {
-        const perfilRes = await fetch(`${API_URL}/auth/perfil`, { headers: { Authorization: `Bearer ${token}` } })
+        const perfilRes = await fetch(`${API_URL}/api/auth/perfil`, { headers: { Authorization: `Bearer ${token}` } })
         if (!perfilRes.ok) return
         const p = await perfilRes.json()
         setPerfil(`Usuario: ${p.nombre} (${p.email})`)
         if (p?.id) localStorage.setItem('userId', String(p.id))
+        if (p?.rol) localStorage.setItem('role', String(p.rol))
       } catch {}
     })()
   }, [])
@@ -38,7 +39,7 @@ export default function Home() {
     const nombre = regNombre
     const email = regEmail
     const contrasena = regPass
-    const res = await fetch(`${API_URL}/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ nombre, email, contrasena }) })
+    const res = await fetch(`${API_URL}/api/auth/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ nombre, email, contrasena }) })
     if (!res.ok) {
       setPerfil(`Registro error: ${await res.text()}`)
       return
@@ -54,7 +55,7 @@ export default function Home() {
     e.preventDefault()
     const email = loginEmail
     const contrasena = loginPass
-    const res = await fetch(`${API_URL}/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, contrasena }) })
+    const res = await fetch(`${API_URL}/api/auth/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, contrasena }) })
     if (!res.ok) {
       setPerfil(`Login error: ${await res.text()}`)
       return
@@ -62,10 +63,11 @@ export default function Home() {
     const data = await res.json()
     const token = data.token
     localStorage.setItem('token', token)
-    const perfilRes = await fetch(`${API_URL}/auth/perfil`, { headers: { Authorization: `Bearer ${token}` } })
+    const perfilRes = await fetch(`${API_URL}/api/auth/perfil`, { headers: { Authorization: `Bearer ${token}` } })
     const p = await perfilRes.json()
     setPerfil(`Usuario: ${p.nombre} (${p.email})`)
     if (p?.id) localStorage.setItem('userId', String(p.id))
+    if (p?.rol) localStorage.setItem('role', String(p.rol))
     setLoginEmail('')
     setLoginPass('')
   }
@@ -73,6 +75,7 @@ export default function Home() {
   function onLogout() {
     localStorage.removeItem('token')
     localStorage.removeItem('userId')
+    localStorage.removeItem('role')
     setPerfil('')
   }
 

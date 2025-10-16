@@ -6,7 +6,6 @@ import {
   actualizarVehiculo,
   eliminarVehiculo,
   vehiculosDisponibles,
-  // backfillImagenes
 } from "../controller/vehiculos.controller.js";
 import authMiddleware from "../middleware/authmiddleware.js";
 import verificarAdmin from "../middleware/admin.js";
@@ -31,6 +30,7 @@ router.get(
   validateRequest,
   listarVehiculos
 );
+
 router.get(
   "/disponibles",
   [
@@ -40,18 +40,19 @@ router.get(
   validateRequest,
   vehiculosDisponibles
 );
+
 router.get("/:id", valVehiculoId, validateRequest, verVehiculo);
 
 // Solo admin puede crear, actualizar o eliminar vehículos
 router.post(
   "/",
-  // Reactivado: proteger creación de vehículos en producción
   authMiddleware,
   verificarAdmin,
   valCreateVehiculo,
   validateRequest,
   crearVehiculo
 );
+
 router.put(
   "/:id",
   authMiddleware,
@@ -60,15 +61,16 @@ router.put(
   validateRequest,
   actualizarVehiculo
 );
-router.delete("/:id", authMiddleware, verificarAdmin, valVehiculoId, validateRequest, eliminarVehiculo);
 
-// Endpoint para completar imágenes faltantes (desactivado)
-// router.post(
-//   "/backfill-imagenes",
-//   authMiddleware,
-//   verificarAdmin,
-//   async (req, res, next) => next(),
-//   backfillImagenes
-// );
+router.delete(
+  "/:id",
+  authMiddleware,
+  verificarAdmin,
+  valVehiculoId,
+  validateRequest,
+  eliminarVehiculo
+);
 
 export default router;
+
+

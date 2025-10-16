@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { API_URL } from '../lib/api'
 
@@ -9,17 +9,23 @@ export default function VehiculoDetalle() {
   const [vehiculo, setVehiculo] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
+  const [authRequired, setAuthRequired] = useState(false)
   const [mensaje, setMensaje] = useState('')
   const [fi, setFi] = useState('')
   const [ff, setFf] = useState('')
   const [resenas, setResenas] = useState([])
   const [calificacion, setCalificacion] = useState(5)
+  const [showRating, setShowRating] = useState(false)
+  const ratingRef = useRef(null)
   const [texto, setTexto] = useState('')
 
   useEffect(() => {
     ;(async () => {
+      // Requiere login para ver detalle
+      const hasToken = (() => { try { return Boolean(localStorage.getItem('token')) } catch { return false } })()
+      if (!hasToken) { setAuthRequired(true); setLoading(false); return }
       try {
-        const res = await fetch(`${API_URL}/vehiculos/${id}`)
+        const res = await fetch(`${API_URL}/api/vehiculos/${id}`)
         if (!res.ok) throw new Error('No se pudo cargar el vehículo')
         const data = await res.json()
         setVehiculo(data)
@@ -31,7 +37,7 @@ export default function VehiculoDetalle() {
     })()
     ;(async () => {
       try {
-        const res = await fetch(`${API_URL}/resenas/vehiculo/${id}`)
+        const res = await fetch(`${API_URL}/api/resenas/vehiculo/${id}`)
         if (!res.ok) return
         const data = await res.json()
         setResenas(Array.isArray(data) ? data : [])
@@ -39,9 +45,22 @@ export default function VehiculoDetalle() {
     })()
   }, [id])
 
+  // cerrar dropdown al click fuera
+  useEffect(() => {
+    function onDocClick(e) {
+      const el = ratingRef.current
+      if (!el) return
+      if (showRating && !el.contains(e.target)) setShowRating(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [showRating])
+
   if (loading) return <div style={{ padding: 16 }}>Cargando...</div>
+  if (authRequired) return <div style={{ padding: 16 }}>Inicia sesión para ver el detalle del vehículo.</div>
   if (error) return <div style={{ padding: 16 }}>Error: {error}</div>
   if (!vehiculo) return <div style={{ padding: 16 }}>No encontrado</div>
+
 
   return (
     <div className="detail-page">
@@ -65,7 +84,7 @@ export default function VehiculoDetalle() {
           const usuarioId = localStorage.getItem('userId')
           if (!token || !usuarioId) { setMensaje('Debes iniciar sesión para reseñar'); return }
           try {
-            const res = await fetch(`${API_URL}/resenas`, {
+            const res = await fetch(`${API_URL}/api/resenas`, {
               method: 'POST',
               headers: { 'Content-Type':'application/json', Authorization: `Bearer ${token}` },
               body: JSON.stringify({ id_usuario: Number(usuarioId), id_vehiculo: Number(id), texto_resenia: texto, calificacion: Number(calificacion) })
@@ -80,9 +99,35 @@ export default function VehiculoDetalle() {
         }}>
           <label className="field">
             <span>Calificación</span>
-            <select value={calificacion} onChange={e => setCalificacion(e.target.value)}>
-              {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
+            <div className="rating-select" ref={ratingRef}>
+              <button
+                type="button"
+                className="rating-trigger"
+                onClick={() => setShowRating(v => !v)}
+                aria-haspopup="listbox"
+                aria-expanded={showRating}
+              >
+                {calificacion} ★
+              </button>
+              {showRating ? (
+                <ul className="rating-dropdown" role="listbox">
+                  {[1,2,3,4,5].map(n => (
+                    <li key={n}>
+                      <button
+                        type="button"
+                        className="rating-option"
+                        onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); setCalificacion(n); setShowRating(false) }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCalificacion(n); setShowRating(false) }}
+                        role="option"
+                        aria-selected={calificacion === n}
+                      >
+                        {n} ★
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
           </label>
           <label className="field stretch">
             <span>Tu reseña (opcional)</span>
@@ -103,7 +148,7 @@ export default function VehiculoDetalle() {
           if (!fi || !ff) { setMensaje('Completa ambas fechas'); return }
           if (fi > ff) { setMensaje('La fecha de inicio no puede ser mayor que la de fin'); return }
           try {
-            const res = await fetch(`${API_URL}/reservas`, {
+            const res = await fetch(`${API_URL}/api/reservas`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
