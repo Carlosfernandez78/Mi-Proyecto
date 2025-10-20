@@ -161,9 +161,9 @@ export const crearReserva = async (req, res) => {
 
 // Actualizar una reserva
 export const actualizarReserva = async (req, res) => {
-  const { usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado } = req.body;
+  const { usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado } = req.body || {};
   try {
-    // Verificar solapamiento si cambian fechas o vehículo
+    // Verificar solapamiento si cambian fechas o vehículo y fechas
     if (vehiculo_id && fecha_inicio && fecha_fin) {
       const [solapes] = await pool.query(
         `SELECT 1 FROM reservas
@@ -178,14 +178,29 @@ export const actualizarReserva = async (req, res) => {
         return res.status(409).json({ error: 'El vehículo no está disponible en el nuevo rango' });
       }
     }
+
+    // Construir SET dinámico solo con campos provistos
+    const sets = [];
+    const params = [];
+    if (typeof usuario_id !== 'undefined') { sets.push('usuario_id = ?'); params.push(usuario_id); }
+    if (typeof vehiculo_id !== 'undefined') { sets.push('vehiculo_id = ?'); params.push(vehiculo_id); }
+    if (typeof fecha_inicio !== 'undefined') { sets.push('fecha_inicio = ?'); params.push(fecha_inicio); }
+    if (typeof fecha_fin !== 'undefined') { sets.push('fecha_fin = ?'); params.push(fecha_fin); }
+    if (typeof estado !== 'undefined') { sets.push('estado = ?'); params.push(estado); }
+
+    if (sets.length === 0) {
+      return res.status(400).json({ error: 'No hay campos para actualizar' });
+    }
+
+    params.push(req.params.id);
     const [result] = await pool.query(
-      'UPDATE reservas SET usuario_id=?, vehiculo_id=?, fecha_inicio=?, fecha_fin=?, estado=? WHERE id=?',
-      [usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado, req.params.id]
+      `UPDATE reservas SET ${sets.join(', ')} WHERE id = ?`,
+      params
     );
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Reserva no encontrada' });
     res.json({ mensaje: 'Reserva actualizada' });
   } catch (error) {
-    console.error('Error al actualizar reserva:', error); // Mejor registro de error
+    console.error('Error al actualizar reserva:', error);
     res.status(500).json({ error: 'Error interno al actualizar la reserva' });
   }
 };
