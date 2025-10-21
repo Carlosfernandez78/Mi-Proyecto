@@ -43,13 +43,14 @@ import {
 } from "../controller/reservas.controller.js";
 
 import authMiddleware from "../middleware/authmiddleware.js";
+import verificarAdmin from "../middleware/admin.js";
 import validateRequest from "../middleware/validateRequest.js";
 import { body, param } from "express-validator";
 
 const router = express.Router();
 
 // Listar todas las reservas (PRIVADA: solo administradores)
-router.get("/", authMiddleware, listarReservas);
+router.get("/", authMiddleware, verificarAdmin, listarReservas);
 
 // Obtener reservas por un usuario específico (PRIVADA: para el usuario o admin)
 router.get("/usuario/:id", authMiddleware, reservasPorUsuario);

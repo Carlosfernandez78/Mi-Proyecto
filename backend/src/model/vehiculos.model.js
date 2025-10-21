@@ -7,13 +7,13 @@ export const obtenerVehiculos = async () => {
 };
 
 // Crear un vehículo
-export const crearVehiculo = async ({ marca, modelo, anio, disponible, imagen }) => {
+export const crearVehiculo = async ({ marca, modelo, anio, disponible, imagen, precio }) => {
   // Si se provee imagen, intentar insertar la columna; caso contrario, usar columnas existentes
   if (typeof imagen !== 'undefined') {
     try {
       const [result] = await pool.query(
-        "INSERT INTO vehiculos (marca, modelo, anio, disponible, imagen) VALUES (?, ?, ?, ?, ?)",
-        [marca, modelo, anio, disponible, imagen]
+        "INSERT INTO vehiculos (marca, modelo, anio, disponible, imagen, precio) VALUES (?, ?, ?, ?, ?, ?)",
+        [marca, modelo, anio, disponible, imagen, precio ?? null]
       );
       return result.insertId;
     } catch (e) {
@@ -26,8 +26,8 @@ export const crearVehiculo = async ({ marca, modelo, anio, disponible, imagen })
     }
   }
   const [result] = await pool.query(
-    "INSERT INTO vehiculos (marca, modelo, anio, disponible) VALUES (?, ?, ?, ?)",
-    [marca, modelo, anio, disponible]
+    "INSERT INTO vehiculos (marca, modelo, anio, disponible, precio) VALUES (?, ?, ?, ?, ?)",
+    [marca, modelo, anio, disponible, precio ?? null]
   );
   return result.insertId;
 };

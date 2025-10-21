@@ -6,6 +6,10 @@
 .menu-principal {
   background-color: var(--fondo-footer-header);
   padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 .menu-principal ul {
   list-style: none;
@@ -13,6 +17,7 @@
   padding: 0;
   display: flex;
   gap: 1rem;
+  align-items: center; /* alinear verticalmente todos los items (links y botón) */
 }
 .menu-principal li a:hover {
   background-color: var(--hover-footer-header);
@@ -29,4 +34,87 @@
 .seleccionado {
   background-color: #007bff;
   color: #fff;
+}
+
+.brand {
+  color: #d9d9d9; /* gris claro */
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  font-family: 'Lobster', cursive;
+  font-size: 1.5rem; /* un poco más grande */
+  display: inline-block; /* necesario para borde y sombra */
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 140, 0, 0.85);
+  border-radius: 10px;
+  text-shadow:
+    0 0 6px rgba(255, 140, 0, 0.92),
+    0 0 18px rgba(255, 140, 0, 0.74),
+    0 0 32px rgba(255, 140, 0, 0.6);
+  box-shadow:
+    0 0 26px rgba(255, 140, 0, 0.75),
+    inset 0 0 16px rgba(255, 140, 0, 0.5);
+  animation: neon-flicker 2.4s ease-in-out infinite;
+  will-change: box-shadow, text-shadow, filter, opacity;
+}
+
+/* Botón de tema con estilo equivalente a los enlaces del menú */
+.theme-toggle {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background-color: var(--hover-footer-header);
+}
+
+/* (iconos removidos por solicitud) */
+
+@keyframes neon-flicker {
+  0% {
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.7), inset 0 0 14px rgba(255, 140, 0, 0.45);
+    text-shadow: 0 0 6px rgba(255,140,0,0.85), 0 0 14px rgba(255,140,0,0.7), 0 0 24px rgba(255,140,0,0.6);
+    filter: brightness(1);
+  }
+  10% {
+    box-shadow: 0 0 26px rgba(255, 140, 0, 0.75), inset 0 0 16px rgba(255, 140, 0, 0.5);
+    text-shadow: 0 0 6px rgba(255,140,0,0.95), 0 0 18px rgba(255,140,0,0.78), 0 0 32px rgba(255,140,0,0.62);
+    filter: brightness(1.14);
+  }
+  13% { /* pequeño parpadeo */
+    box-shadow: 0 0 12px rgba(255, 140, 0, 0.5), inset 0 0 9px rgba(255, 140, 0, 0.32);
+    text-shadow: 0 0 4px rgba(255,140,0,0.65), 0 0 10px rgba(255,140,0,0.5);
+    filter: brightness(0.97);
+  }
+  25% {
+    box-shadow: 0 0 26px rgba(255, 140, 0, 0.75), inset 0 0 16px rgba(255, 140, 0, 0.5);
+    text-shadow: 0 0 6px rgba(255,140,0,0.95), 0 0 18px rgba(255,140,0,0.78), 0 0 32px rgba(255,140,0,0.62);
+    filter: brightness(1.12);
+  }
+  58% {
+    box-shadow: 0 0 22px rgba(255, 140, 0, 0.72), inset 0 0 14px rgba(255, 140, 0, 0.48);
+    text-shadow: 0 0 5px rgba(255,140,0,0.88), 0 0 14px rgba(255,140,0,0.7), 0 0 26px rgba(255,140,0,0.6);
+    filter: brightness(1.08);
+  }
+  61% { /* otro parpadeo breve */
+    box-shadow: 0 0 14px rgba(255, 140, 0, 0.55), inset 0 0 10px rgba(255, 140, 0, 0.35);
+    text-shadow: 0 0 4px rgba(255,140,0,0.7), 0 0 10px rgba(255,140,0,0.55);
+    filter: brightness(0.95);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.7), inset 0 0 14px rgba(255, 140, 0, 0.45);
+    text-shadow: 0 0 6px rgba(255,140,0,0.85), 0 0 14px rgba(255,140,0,0.7), 0 0 24px rgba(255,140,0,0.6);
+    filter: brightness(1);
+  }
+}
+
+/* Accesibilidad: respetar "reducir movimiento" para evitar parpadeo si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  .brand {
+    animation: none;
+  }
 }

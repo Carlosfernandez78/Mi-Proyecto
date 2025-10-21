@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { API_URL } from '../lib/api'
 
  
 
 export default function VehiculoDetalle() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [vehiculo, setVehiculo] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
@@ -18,12 +19,26 @@ export default function VehiculoDetalle() {
   const [showRating, setShowRating] = useState(false)
   const ratingRef = useRef(null)
   const [texto, setTexto] = useState('')
+  
+  function calcDias(a, b) {
+    if (!a || !b) return 0
+    const d1 = new Date(a)
+    const d2 = new Date(b)
+    const ms = d2.getTime() - d1.getTime()
+    if (isNaN(ms)) return 0
+    const dias = Math.ceil(ms / 86400000)
+    return dias > 0 ? dias : 0
+  }
+  const dias = calcDias(fi, ff)
+  const precioDiario = Number(vehiculo?.precio || 0)
+  const totalEstimado = dias > 0 && precioDiario > 0 ? Number((dias * precioDiario).toFixed(2)) : 0
+  const invalidRange = fi && ff && new Date(fi) > new Date(ff)
 
   useEffect(() => {
     ;(async () => {
       // Requiere login para ver detalle
       const hasToken = (() => { try { return Boolean(localStorage.getItem('token')) } catch { return false } })()
-      if (!hasToken) { setAuthRequired(true); setLoading(false); return }
+      if (!hasToken) { setAuthRequired(true); setLoading(false); navigate('/cuenta', { replace: true }); return }
       try {
         const res = await fetch(`${API_URL}/api/vehiculos/${id}`)
         if (!res.ok) throw new Error('No se pudo cargar el vehículo')
@@ -131,7 +146,7 @@ export default function VehiculoDetalle() {
           </label>
           <label className="field stretch">
             <span>Tu reseña (opcional)</span>
-            <input placeholder="Escribe aquí" value={texto} onChange={e=>setTexto(e.target.value)} />
+            <input name="texto_resenia" placeholder="Escribe aquí" value={texto} onChange={e=>setTexto(e.target.value)} />
           </label>
           <button type="submit">Enviar reseña</button>
         </form>
@@ -165,7 +180,8 @@ export default function VehiculoDetalle() {
             if (!res.ok) {
               setMensaje(`Error: ${data?.error || data?.message || 'No se pudo crear la reserva'}`)
             } else {
-              setMensaje(`Reserva creada (id ${data.id})`)
+              const total = typeof data.total !== 'undefined' ? Number(data.total).toLocaleString('es-AR') : undefined
+              setMensaje(`Reserva creada (id ${data.id})${total ? ` - Total $${total}` : ''}`)
               setFi('')
               setFf('')
             }
@@ -175,13 +191,25 @@ export default function VehiculoDetalle() {
         }}>
           <label className="field">
             <span>Desde</span>
-            <input type="date" value={fi} onChange={(e) => setFi(e.target.value)} required />
+            <input name="fecha_inicio" type="date" value={fi} onChange={(e) => setFi(e.target.value)} required />
           </label>
           <label className="field">
             <span>Hasta</span>
-            <input type="date" value={ff} onChange={(e) => setFf(e.target.value)} required />
+            <input name="fecha_fin" type="date" value={ff} onChange={(e) => setFf(e.target.value)} required />
           </label>
-          <button type="submit">Reservar</button>
+          {invalidRange ? (
+            <div className="alert alert-error" role="alert" style={{ marginTop: 6 }}>
+              La fecha de fin debe ser posterior a la fecha de inicio.
+            </div>
+          ) : null}
+          <div style={{ marginTop: 4 }}>
+            {dias > 0 && precioDiario > 0 ? (
+              <span><strong>Total estimado:</strong> {dias} {dias === 1 ? 'día' : 'días'} × ${precioDiario.toLocaleString('es-AR')} = ${totalEstimado.toLocaleString('es-AR')}</span>
+            ) : (
+              <span style={{ opacity: 0.85 }}>Selecciona fechas para ver el total</span>
+            )}
+          </div>
+          <button type="submit" disabled={!fi || !ff || invalidRange}>Reservar</button>
           <span className="detail-message">{mensaje}</span>
         </form>
       </div>

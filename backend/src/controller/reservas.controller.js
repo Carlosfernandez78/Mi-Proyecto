@@ -94,7 +94,6 @@ export const eliminarReserva = async (req, res) => {
 };*/
 
 import pool from '../../config/db.js';
-
 // Obtener reservas por usuario
 export const reservasPorUsuario = async (req, res) => {
   try {
@@ -112,8 +111,8 @@ export const reservasPorUsuario = async (req, res) => {
 // Listar todas las reservas
 export const listarReservas = async (req, res) => {
   try {
-    // OJO: Se recomienda no usar SELECT *
-    const [rows] = await pool.query('SELECT * FROM reservas');
+    // Incluir join para acceder a email de usuario si se necesita
+    const [rows] = await pool.query('SELECT r.*, u.email FROM reservas r LEFT JOIN usuarios u ON u.id = r.usuario_id');
     res.json(rows);
   } catch (error) {
     console.error('Error al listar reservas:', error);
@@ -148,11 +147,21 @@ export const crearReserva = async (req, res) => {
       return res.status(409).json({ error: 'El vehículo no está disponible en el rango solicitado' });
     }
 
+    // Obtener precio del vehículo
+    const [veh] = await pool.query('SELECT precio FROM vehiculos WHERE id = ? LIMIT 1', [vehiculo_id]);
+    const precio_diario = Number(veh?.[0]?.precio || 0) || 0;
+    // Calcular días (mínimo 1)
+    const d1 = new Date(fecha_inicio);
+    const d2 = new Date(fecha_fin);
+    const ms = Math.max(0, d2.getTime() - d1.getTime());
+    const dias = Math.max(1, Math.ceil(ms / 86400000));
+    const total = Number((dias * precio_diario).toFixed(2));
+
     const [result] = await pool.query(
-      'INSERT INTO reservas (usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado) VALUES (?, ?, ?, ?, ?)',
-      [usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado || 'pendiente']
+      'INSERT INTO reservas (usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado, precio_diario, total) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado || 'pendiente', precio_diario || null, total || null]
     );
-    res.status(201).json({ id: result.insertId, ...req.body });
+    res.status(201).json({ id: result.insertId, usuario_id, vehiculo_id, fecha_inicio, fecha_fin, estado: estado || 'pendiente', precio_diario, total });
   } catch (error) {
     console.error('Error al crear reserva:', error); // Mejor registro de error
     res.status(500).json({ error: 'Error interno al crear reserva' });

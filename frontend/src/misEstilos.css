@@ -1,4 +1,119 @@
 :root {
+  --brand-orange: #ff8c00;
+  --brand-orange-border: rgba(255, 140, 0, 0.85);
+  --brand-orange-glow1: rgba(255, 140, 0, 0.6);
+  --brand-orange-glow2: rgba(255, 140, 0, 0.4);
+}
+
+.filters-bar .select-shell {
+  background-color: rgba(255,255,255,0.06) !important;
+}
+.filters-bar .select-shell:hover {
+  background-color: rgba(255,255,255,0.10) !important;
+}
+/* ---------------- Modal reutilizable ---------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.modal-card {
+  width: min(560px, 92%);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modal-title {
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.modal-actions .btn-danger,
+.modal-actions .btn-success {
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 1000px !important; /* asegurar bordes totalmente redondeados para ambos */
+}
+
+/* Etiquetas y asteriscos para campos requeridos */
+.field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.required-mark {
+  color: #ff6b6b;
+}
+
+/* Errores de validación en formularios del admin */
+.field-error {
+  color: #ff6b6b;
+  font-size: 0.85em;
+}
+
+.input-invalid {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25) !important;
+}
+.reserva-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.15);
+  font-size: 0.85em;
+  vertical-align: middle;
+}
+
+.estado-pendiente {
+  background: rgba(255, 215, 0, 0.2);
+  color: #fff;
+  border-color: rgba(255, 215, 0, 0.45);
+}
+
+.estado-confirmada {
+  background: rgba(46, 204, 113, 0.2);
+  color: #fff;
+  border-color: rgba(46, 204, 113, 0.45);
+}
+
+.estado-cancelada {
+  background: rgba(231, 76, 60, 0.2);
+  color: #fff;
+  border-color: rgba(231, 76, 60, 0.45);
+}
+:root {
   --fondo-footer-header: rgb(50, 70, 100);
   --hover-footer-header: rgb(70, 90, 140);
   --bg: #ffffff;
@@ -8,6 +123,9 @@
   --danger-bg: rgba(255, 0, 0, 0.15);
   --danger-bg-hover: rgba(255, 0, 0, 0.22);
   --danger-border: rgba(255, 0, 0, 0.35);
+  --success-bg: rgba(0, 200, 83, 0.15);
+  --success-bg-hover: rgba(0, 200, 83, 0.22);
+  --success-border: rgba(0, 200, 83, 0.35);
 }
 
 html,
@@ -97,7 +215,7 @@ main {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 24px 24px 96px; /* más espacio inferior para separar del footer */
   gap: 16px;
 }
 
@@ -106,9 +224,11 @@ main {
   max-width: 420px;
   margin: 0 auto;
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1px solid var(--brand-orange-border);
   border-radius: 12px;
   padding: 16px;
+  box-shadow: 0 0 12px 4px var(--brand-orange-glow2);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .auth-title {
@@ -196,14 +316,14 @@ body {
 .auth input:hover,
 .auth select:hover {
   background-color: rgba(255,255,255,0.22);
-  border-color: var(--hover-footer-header);
+  border-color: var(--brand-orange-border);
 }
 
 .auth input:focus,
 .auth select:focus {
   outline: none;
-  border-color: var(--hover-footer-header);
-  box-shadow: 0 0 0 2px rgba(70, 90, 140, 0.25);
+  border-color: var(--brand-orange-border);
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.25), 0 0 10px var(--brand-orange-glow1);
 }
 
 /* Botones de cuenta (registrarse/login) redondeados y contenidos */
@@ -274,6 +394,27 @@ body {
     --card-bg: rgba(255,255,255,0.06);
     --card-border: rgba(255,255,255,0.12);
   }
+}
+
+/* --- Theme overrides via data-theme attribute --- */
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --fg: #111111;
+  --card-bg: rgba(255,255,255,0.65);
+  --card-border: rgba(0,0,0,0.25);
+  --page-bg-overlay: rgba(255,255,255,0.35);
+  --fondo-footer-header: rgb(50, 70, 100);
+  --hover-footer-header: rgb(70, 90, 140);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1115;
+  --fg: #e9eef5;
+  --card-bg: rgba(17, 25, 40, 0.55);
+  --card-border: rgba(255,255,255,0.18);
+  --page-bg-overlay: rgba(0,0,0,0.45);
+  --fondo-footer-header: rgb(35, 45, 70);
+  --hover-footer-header: rgb(55, 70, 110);
 }
 
 /* ---------------- Detalle de vehículo (reseñas y reservas) ---------------- */
@@ -354,15 +495,25 @@ body {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background: transparent;
   width: 100%;
-  padding: 12px 36px 12px 14px; /* espacio para el icono */
-  border: 0;
+  padding: 12px 36px 12px 14px; /* espacio para el icono si se usa en shells */
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background-color: rgba(255,255,255,0.15) !important;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
   color: var(--fg);
+}
+
+.translucent-select:hover {
+  background-color: rgba(255,255,255,0.22) !important;
+  border-color: var(--hover-footer-header);
 }
 
 .translucent-select:focus {
   outline: none;
+  border-color: var(--hover-footer-header);
+  box-shadow: 0 0 0 2px rgba(70, 90, 140, 0.25);
 }
 
 /* Forzar select translúcido y desactivar apariencia nativa que impone fondo blanco */
@@ -496,6 +647,17 @@ body {
   background-color: var(--hover-footer-header);
 }
 
+.alert {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+.alert-error {
+  background: rgba(231,76,60,0.18);
+  border-color: rgba(231,76,60,0.45);
+  color: #7b241c;
+}
+
 /* Botón de acción peligrosa (Eliminar) translúcido rojo */
 .btn-danger {
   padding: 8px 12px;
@@ -513,6 +675,35 @@ body {
 .btn-danger:hover {
   background-color: var(--danger-bg-hover);
   box-shadow: 0 0 16px rgba(255,0,0,0.35), 0 0 30px rgba(255,0,0,0.25);
+}
+
+/* Botón de acción positiva (Editar/Guardar) translúcido verde */
+.btn-success {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--success-border);
+  background-color: var(--success-bg);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  color: var(--fg);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 10px rgba(0,200,83,0.25), 0 0 18px rgba(0,200,83,0.15);
+}
+
+.btn-success:hover {
+  background-color: var(--success-bg-hover);
+  box-shadow: 0 0 16px rgba(0,200,83,0.35), 0 0 30px rgba(0,200,83,0.25);
+}
+
+/* Modal: forzar relleno translúcido más marcado y texto blanco en Guardar */
+.modal-actions .btn-success {
+  background-color: rgba(0, 200, 83, 0.3);
+  border-color: var(--success-border);
+  color: #fff;
+}
+.modal-actions .btn-success:hover {
+  background-color: rgba(0, 200, 83, 0.4);
 }
 
 /* Bengala (spark) */

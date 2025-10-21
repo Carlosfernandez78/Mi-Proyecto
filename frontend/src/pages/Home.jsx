@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { API_URL } from '../lib/api'
+import IframePasswordInput from '../components/IframePasswordInput'
 // const API_URL = window.API_URL || import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 // Nota: Esta vista mantiene el bloque de autenticación.
@@ -86,7 +87,11 @@ export default function Home() {
         <div className="auth">
         {!perfil ? (
           <>
-            <form onSubmit={onRegister} className="formRow registration" autoComplete="off">
+            <form onSubmit={onRegister} className="formRow registration" autoComplete="off" noValidate>
+              {/* Campos señuelo (registro) para desactivar sugerencias/gestores */}
+              <input type="text" name="fake-user-reg" autoComplete="username" tabIndex={-1} aria-hidden="true" style={{ position:'absolute', left:-9999, width:1, height:1, opacity:0 }} />
+              <input type="password" name="fake-pass-reg" autoComplete="current-password" tabIndex={-1} aria-hidden="true" style={{ position:'absolute', left:-9999, width:1, height:1, opacity:0 }} />
+            <label className="field-label" htmlFor="register-nombre">Nombre <span className="required-mark">*</span></label>
               <input
                 id="register-nombre"
                 name="register_nombre"
@@ -97,27 +102,26 @@ export default function Home() {
                 onChange={e=>setRegNombre(e.target.value)}
                 autoComplete="off"
               />
+            <label className="field-label" htmlFor="register-email">Email <span className="required-mark">*</span></label>
               <input
                 id="register-email"
-                name="register_email"
+                name="registration_email"
                 type="email"
                 placeholder="email"
                 required
                 value={regEmail}
                 onChange={e=>setRegEmail(e.target.value)}
                 autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
               />
+            <label className="field-label" htmlFor="register-password">Contraseña <span className="required-mark">*</span></label>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <input
-                  id="register-password"
-                  name="register_password"
-                  type={showRegPass ? "text" : "password"}
+                <IframePasswordInput
                   placeholder="contraseña"
                   required
-                  value={regPass}
                   onChange={e=>setRegPass(e.target.value)}
-                  autoComplete="new-password"
-                  style={{ flex: 1 }}
                 />
                 <button
                   type="button"
@@ -133,26 +137,31 @@ export default function Home() {
               <button type="submit">Registrarse</button>
             </form>
             <div className="auth-separator">o</div>
-            <form onSubmit={onLogin} className="formRow login" autoComplete="off">
+            <form onSubmit={onLogin} className="formRow login" autoComplete="off" noValidate>
+              {/* Campos señuelo para desactivar gestores de contraseñas */}
+              <input type="text" name="fake-username" autoComplete="username" tabIndex={-1} aria-hidden="true" style={{ position:'absolute', left:-9999, width:1, height:1, opacity:0 }} />
+              <input type="password" name="fake-password" autoComplete="current-password" tabIndex={-1} aria-hidden="true" style={{ position:'absolute', left:-9999, width:1, height:1, opacity:0 }} />
+
+              <label className="field-label" htmlFor="login-email">Email <span className="required-mark">*</span></label>
               <input
-                name="email"
+                id="login-email"
+                name="login_email"
                 type="email"
                 placeholder="email"
                 required
                 value={loginEmail}
                 onChange={e=>setLoginEmail(e.target.value)}
-                autoComplete="on"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
               />
+              <label className="field-label" htmlFor="login-password">Contraseña <span className="required-mark">*</span></label>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <input
-                  name="pass"
-                  type={showLoginPass ? "text" : "password"}
+                <IframePasswordInput
                   placeholder="contraseña"
                   required
-                  value={loginPass}
                   onChange={e=>setLoginPass(e.target.value)}
-                  autoComplete="new-password"
-                  style={{ flex: 1 }}
                 />
                 <button
                   type="button"

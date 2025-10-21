@@ -30,10 +30,10 @@ export default function VehiculoCard({ vehiculo }) {
       {/* Puedes eliminar el <img> con clase "vehiculo-fondo" */}
       
       <h3 className="vehiculo-titulo">{titulo}</h3>
-      {anio ? <p className="vehiculo-detalle">Año: {anio}</p> : null}
       {typeof precio !== 'undefined' ? (
-        <p className="vehiculo-precio">${precio}</p>
+        <p className="vehiculo-precio">${Number(precio).toLocaleString('es-AR')}</p>
       ) : null}
+      {anio ? <p className="vehiculo-detalle">Año: {anio}</p> : null}
       <button className="vehiculo-boton">Ver detalle</button>
     </div>
   );

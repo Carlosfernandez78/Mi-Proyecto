@@ -19,10 +19,12 @@
     background-position: center;
     background-repeat: no-repeat;
     box-sizing: border-box;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
   
   .vehiculo-card:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border-color: rgba(255,140,0,0.95);
+    box-shadow: 0 0 0 3px rgba(255,140,0,0.85), 0 0 22px rgba(255,140,0,0.65), 0 10px 22px rgba(0,0,0,0.35);
   }
   
   /* Imagen de fondo traslúcida debajo del contenido */
@@ -48,18 +50,30 @@
   }
   
   .vehiculo-detalle {
-    color: #555;
-    font-size: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    background: rgba(0,0,0,0.28);
+    border: 1px solid rgba(255,255,255,0.28);
+    padding: 2px 10px;
+    border-radius: 999px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.35);
     position: relative;
     z-index: 1;
     text-align: center;
     align-self: center;
   }
   
-  .vehiculo-precio {
-    font-weight: bold;
-    color: #2a9d8f;
-    margin: 8px 0;
+.vehiculo-precio {
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    background: rgba(42, 157, 143, 0.35);
+    border: 1px solid rgba(42, 157, 143, 0.55);
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    margin: 4px 0 6px 0;
     position: relative;
     z-index: 1;
     text-align: center;
@@ -80,7 +94,8 @@
   }
   
   .vehiculo-boton:hover {
-    background-color: #2a9d8f;
+    background-color: #ff8c00; /* naranja para acompañar el glow */
+    box-shadow: 0 0 0 2px rgba(255,140,0,0.4), 0 6px 14px rgba(255,140,0,0.35);
   }
 
 /* ... el resto de tus estilos (.vehiculo-card:hover, .vehiculo-titulo, etc.) se mantienen igual ... */

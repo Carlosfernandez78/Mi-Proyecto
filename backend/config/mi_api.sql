@@ -12,7 +12,8 @@ CREATE TABLE vehiculos (
   modelo VARCHAR(50) NOT NULL,
   anio INT NOT NULL,
   disponible BOOLEAN DEFAULT TRUE,
-  imagen VARCHAR(255) NULL
+  imagen VARCHAR(255) NULL,
+  precio DECIMAL(10,2) NULL
 );
 
 CREATE TABLE reservas (

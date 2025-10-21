@@ -343,19 +343,30 @@ export const crearVehiculo = async (req, res) => {
 export const actualizarVehiculo = async (req, res) => {
   try {
     const id = req.params.id;
-    const { marca, modelo, anio, disponible } = req.body;
-    // OJO: Esta lógica de UPDATE también podría ir al modelo.
-    const [result] = await pool.query(
-      "UPDATE vehiculos SET marca = ?, modelo = ?, anio = ?, disponible = ? WHERE id = ?",
-      [marca, modelo, anio, disponible, id]
-    );
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Vehículo no encontrado" });
+    const { marca, modelo, anio, disponible, imagen, precio } = req.body || {};
+
+    const sets = [];
+    const params = [];
+    if (typeof marca !== 'undefined') { sets.push('marca = ?'); params.push(marca); }
+    if (typeof modelo !== 'undefined') { sets.push('modelo = ?'); params.push(modelo); }
+    if (typeof anio !== 'undefined') { sets.push('anio = ?'); params.push(anio); }
+    if (typeof disponible !== 'undefined') { sets.push('disponible = ?'); params.push(disponible ? 1 : 0); }
+    if (typeof imagen !== 'undefined') { sets.push('imagen = ?'); params.push(imagen); }
+    if (typeof precio !== 'undefined') { sets.push('precio = ?'); params.push(precio); }
+
+    if (sets.length === 0) {
+      return res.status(400).json({ error: 'No hay campos para actualizar' });
     }
-    res.json({ mensaje: "Vehículo actualizado" });
+
+    params.push(id);
+    const [result] = await pool.query(`UPDATE vehiculos SET ${sets.join(', ')} WHERE id = ?`, params);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Vehículo no encontrado' });
+    }
+    res.json({ mensaje: 'Vehículo actualizado' });
   } catch (error) {
     console.error('Error al actualizar vehículo:', error);
-    res.status(500).json({ error: "Error interno al actualizar vehículo" });
+    res.status(500).json({ error: 'Error interno al actualizar vehículo' });
   }
 };
 
@@ -419,5 +430,32 @@ export const vehiculosDisponibles = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener vehículos disponibles:', error);
     res.status(500).json({ error: "Error interno al obtener vehículos disponibles" });
+  }
+};
+
+// Opciones de vehículos (marcas y modelos). Soporta marca para filtrar modelos.
+export const opcionesVehiculos = async (req, res) => {
+  try {
+    const { marca } = req.query;
+    const [marcasRows] = await pool.query(
+      `SELECT DISTINCT marca FROM vehiculos WHERE marca IS NOT NULL AND marca <> '' ORDER BY marca`
+    );
+    let modelosRows;
+    if (marca) {
+      [modelosRows] = await pool.query(
+        `SELECT DISTINCT modelo FROM vehiculos WHERE marca = ? AND modelo IS NOT NULL AND modelo <> '' ORDER BY modelo`,
+        [marca]
+      );
+    } else {
+      [modelosRows] = await pool.query(
+        `SELECT DISTINCT modelo FROM vehiculos WHERE modelo IS NOT NULL AND modelo <> '' ORDER BY modelo`
+      );
+    }
+    const marcas = marcasRows.map(r => r.marca).filter(Boolean);
+    const modelos = modelosRows.map(r => r.modelo).filter(Boolean);
+    res.json({ marcas, modelos });
+  } catch (error) {
+    console.error('Error al obtener opciones de vehículos:', error);
+    res.status(500).json({ error: 'Error interno al obtener opciones' });
   }
 };

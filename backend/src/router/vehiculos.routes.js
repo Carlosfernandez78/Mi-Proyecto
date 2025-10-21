@@ -6,6 +6,7 @@ import {
   actualizarVehiculo,
   eliminarVehiculo,
   vehiculosDisponibles,
+  opcionesVehiculos,
 } from "../controller/vehiculos.controller.js";
 import authMiddleware from "../middleware/authmiddleware.js";
 import verificarAdmin from "../middleware/admin.js";
@@ -40,6 +41,9 @@ router.get(
   validateRequest,
   vehiculosDisponibles
 );
+
+// Opciones (marcas y modelos)
+router.get('/opciones', opcionesVehiculos);
 
 router.get("/:id", valVehiculoId, validateRequest, verVehiculo);
 

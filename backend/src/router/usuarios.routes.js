@@ -1,38 +1,4 @@
-/*import express from 'express';
-import { obtenerUsuarios, crearUsuario } from "../controller/usuarios.controller.js";
-import authMiddleware from '../middleware/authmiddleware.js';
-import verificarAdmin from '../middleware/admin.js';
-import { valCreateUser, valUpdateUser, valUserId } from '../middleware/user.validator.js';
-import validateRequest from '../middleware/validateRequest.js';
-const router = express.Router();
-
-router.get('/', authMiddleware, verificarAdmin, obtenerUsuarios);
-// Restringido: solo administradores pueden crear usuarios desde esta ruta
-router.post('/', authMiddleware, verificarAdmin, valCreateUser, validateRequest, crearUsuario);
-
-export default router;*/
-
-/*import express from 'express';
-// Importamos las funciones del controlador
-import { listarUsuarios, crearUsuario } from "../controller/usuarios.controller.js"; 
-// Eliminamos todas las importaciones de middleware de seguridad y validación
-// import authMiddleware from '../middleware/authmiddleware.js';
-// import verificarAdmin from '../middleware/admin.js';
-// import { valCreateUser } from '../middleware/user.validator.js'; 
-// import validateRequest from '../middleware/validateRequest.js';
-
-const router = express.Router();
-
-// GET /api/usuarios
-// Acceso abierto: lista los usuarios sin verificar si es Admin o si está logueado.
-router.get('/', listarUsuarios);
-
-// POST /api/usuarios
-// Acceso abierto: permite crear usuarios sin validación de campos complejos. 
-// OJO: La validación de campos (nombre, email, contraseña) SÍ se mantiene en el controlador.
-router.post('/', crearUsuario);
-
-export default router;*/
+// Limpiado: se removieron variantes legacy comentadas
 
 import express from 'express';
 import { listarUsuarios, crearUsuario, actualizarUsuario, eliminarUsuario } from "../controller/usuarios.controller.js";

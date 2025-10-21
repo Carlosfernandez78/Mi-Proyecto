@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
+    "migrate": "node ./scripts/migrate.js",
+    "set:admin": "node ./scripts/setAdmin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

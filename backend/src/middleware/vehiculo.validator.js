@@ -8,6 +8,7 @@ export const valCreateVehiculo = [
   check("disponible").optional().isBoolean().withMessage("Disponible debe ser booleano"),
   // Permitir imagen opcional sin obligarla todavía
   check("imagen").optional().isString().withMessage("imagen debe ser string (URL)"),
+  check("precio").optional().isFloat({ min: 0 }).withMessage("precio debe ser un número positivo"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -23,6 +24,7 @@ export const valUpdateVehiculo = [
   check("modelo").optional().isString(),
   check("anio").optional().isInt(),
   check("disponible").optional().isBoolean(),
+  check("precio").optional().isFloat({ min: 0 }).withMessage("precio debe ser un número positivo"),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
