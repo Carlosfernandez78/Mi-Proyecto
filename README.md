@@ -33,6 +33,9 @@ VITE_API_URL=http://localhost:3000
 ```bash
 cd backend
 npm install
+npm run migrate
+# opcional: crear/actualizar un usuario admin
+npm run set:admin -- --email admin@ejemplo.com --password 123456
 ```
 
 ### Frontend
@@ -113,15 +116,17 @@ Validaciones con `express-validator` activas en (al menos): auth, reservas, veh�
 - Detalle en `frontend/src/pages/VehiculoDetalle.jsx`.
 - Cuenta (login/registro) en `frontend/src/pages/Home.jsx`.
 
-Accesos y restricciones (didáctico):
-- El detalle de vehículo requiere login (redirige a Cuenta si no hay token).
-- El enlace y la vista de Administración solo aparecen para usuarios con rol `admin`.
-- Desde Administración se puede crear usuarios/vehículos y eliminarlos.
+Adicional:
+- Modo claro/oscuro: alternador en el encabezado (se persiste en `localStorage` y respeta la preferencia del sistema si no hay elección).
+- Impresión de reservas: disponible desde “Mis reservas” y panel Admin (abre vista imprimible compatible con PDF).
+- Bloqueo de autofill/gestores de contraseñas: inputs aislados para evitar popups y autocompletados no deseados.
 
 ## Scripts útiles
 ### Backend (en `backend/package.json`)
 - `npm run dev`: Nodemon para desarrollo
 - `npm start`: Ejecuta `node app.js`
+- `npm run migrate`: Ejecuta migraciones (agrega columnas faltantes)
+- `npm run set:admin -- --email <mail> --password <pass>`: Crea/actualiza un usuario admin
 
 ### Frontend (en `frontend/package.json`)
 - `npm run dev`: Vite dev server
