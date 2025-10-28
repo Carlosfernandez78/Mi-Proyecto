@@ -118,11 +118,14 @@ export default function Home() {
               />
             <label className="field-label" htmlFor="register-password">Contraseña <span className="required-mark">*</span></label>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <IframePasswordInput
-                  placeholder="contraseña"
-                  required
-                  onChange={e=>setRegPass(e.target.value)}
-                />
+                <div className="auth-input-shell" style={{ flex: 1 }}>
+                  <IframePasswordInput
+                    placeholder="contraseña"
+                    required
+                    onChange={e=>setRegPass(e.target.value)}
+                    inputType={showRegPass ? 'text' : 'password'}
+                  />
+                </div>
                 <button
                   type="button"
                   className="auth-toggle"
@@ -158,11 +161,14 @@ export default function Home() {
               />
               <label className="field-label" htmlFor="login-password">Contraseña <span className="required-mark">*</span></label>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <IframePasswordInput
-                  placeholder="contraseña"
-                  required
-                  onChange={e=>setLoginPass(e.target.value)}
-                />
+                <div className="auth-input-shell" style={{ flex: 1 }}>
+                  <IframePasswordInput
+                    placeholder="contraseña"
+                    required
+                    onChange={e=>setLoginPass(e.target.value)}
+                    inputType={showLoginPass ? 'text' : 'password'}
+                  />
+                </div>
                 <button
                   type="button"
                   className="auth-toggle"

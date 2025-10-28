@@ -9,6 +9,11 @@ export const valCreateVehiculo = [
   // Permitir imagen opcional sin obligarla todavía
   check("imagen").optional().isString().withMessage("imagen debe ser string (URL)"),
   check("precio").optional().isFloat({ min: 0 }).withMessage("precio debe ser un número positivo"),
+  check("descripcion").optional().isString(),
+  check("combustible").optional().isIn(['nafta','diesel','hibrido','electrico','']).withMessage('combustible inválido'),
+  check("transmision").optional().isIn(['manual','automatica','']).withMessage('transmisión inválida'),
+  check("puertas").optional().isInt({ min: 2, max: 6 }),
+  check("color").optional().isString(),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -25,6 +30,11 @@ export const valUpdateVehiculo = [
   check("anio").optional().isInt(),
   check("disponible").optional().isBoolean(),
   check("precio").optional().isFloat({ min: 0 }).withMessage("precio debe ser un número positivo"),
+  check("descripcion").optional().isString(),
+  check("combustible").optional().isIn(['nafta','diesel','hibrido','electrico','']).withMessage('combustible inválido'),
+  check("transmision").optional().isIn(['manual','automatica','']).withMessage('transmisión inválida'),
+  check("puertas").optional().isInt({ min: 2, max: 6 }),
+  check("color").optional().isString(),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

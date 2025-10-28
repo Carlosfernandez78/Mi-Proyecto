@@ -9,6 +9,8 @@ export default function Admin() {
   const [vehiculos, setVehiculos] = useState([])
   const [reservas, setReservas] = useState([])
   const [mensaje, setMensaje] = useState('')
+  const [fDesde, setFDesde] = useState('')
+  const [fHasta, setFHasta] = useState('')
 
   // Formularios
   const [uNombre, setUNombre] = useState('')
@@ -233,6 +235,135 @@ export default function Admin() {
     } catch { setMensaje('Error de red al eliminar') }
   }
 
+  function imprimirTodasLasReservas() {
+    try {
+      const rows = Array.isArray(reservas) ? reservas : []
+      const trs = rows.map(r => {
+        const total = typeof r.total !== 'undefined' ? Number(r.total).toLocaleString('es-AR') : '-'
+        const precio = typeof r.precio_diario !== 'undefined' ? Number(r.precio_diario).toLocaleString('es-AR') : '-'
+        return `<tr>
+          <td>#${r.id}</td>
+          <td>${r.usuario_id}</td>
+          <td>${r.vehiculo_id}</td>
+          <td>${formatDate(r.fecha_inicio)}</td>
+          <td>${formatDate(r.fecha_fin)}</td>
+          <td>${r.estado}</td>
+          <td>$${precio}</td>
+          <td>$${total}</td>
+        </tr>`
+      }).join('')
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Todas las reservas</title>
+      <style>
+        body{font-family:Arial,Helvetica,sans-serif;padding:16px;color:#111}
+        h1{margin:0 0 12px 0}
+        table{width:100%;border-collapse:collapse}
+        th,td{border:1px solid #ddd;padding:6px;font-size:12px}
+        thead th{background:rgba(255,140,0,0.15)}
+        tfoot td{font-weight:700;background:rgba(0,0,0,0.03)}
+      </style>
+      </head><body>
+        <h1>MiProyecto - Listado de reservas</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Vehículo</th>
+              <th>Desde</th>
+              <th>Hasta</th>
+              <th>Estado</th>
+              <th>Precio diario</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${trs}
+          </tbody>
+        </table>
+        <script>window.onload = () => window.print();</script>
+      </body></html>`
+      const w = window.open('', '_print_all_reservas', 'width=1000,height=700')
+      if (w) { w.document.write(html); w.document.close(); }
+    } catch {}
+  }
+
+  function reservasFiltradas() {
+    try {
+      return (Array.isArray(reservas) ? reservas : []).filter(r => {
+        const okDesde = !fDesde || String(r.fecha_inicio) >= fDesde
+        const okHasta = !fHasta || String(r.fecha_fin) <= fHasta
+        return okDesde && okHasta
+      })
+    } catch { return reservas }
+  }
+
+  function imprimirVisibles() {
+    const rows = reservasFiltradas()
+    try {
+      const trs = rows.map(r => {
+        const total = typeof r.total !== 'undefined' ? Number(r.total).toLocaleString('es-AR') : '-'
+        const precio = typeof r.precio_diario !== 'undefined' ? Number(r.precio_diario).toLocaleString('es-AR') : '-'
+        return `<tr>
+          <td>#${r.id}</td>
+          <td>${r.usuario_id}</td>
+          <td>${r.vehiculo_id}</td>
+          <td>${formatDate(r.fecha_inicio)}</td>
+          <td>${formatDate(r.fecha_fin)}</td>
+          <td>${r.estado}</td>
+          <td>$${precio}</td>
+          <td>$${total}</td>
+        </tr>`
+      }).join('')
+      const html = `<!doctype html><html><head><meta charset=\"utf-8\"><title>Reservas filtradas</title>
+      <style>
+        body{font-family:Arial,Helvetica,sans-serif;padding:16px;color:#111}
+        h1{margin:0 0 12px 0}
+        table{width:100%;border-collapse:collapse}
+        th,td{border:1px solid #ddd;padding:6px;font-size:12px}
+        thead th{background:rgba(255,140,0,0.15)}
+        tfoot td{font-weight:700;background:rgba(0,0,0,0.03)}
+      </style>
+      </head><body>
+        <h1>MiProyecto - Reservas filtradas</h1>
+        <div>Desde: ${fDesde || '—'} • Hasta: ${fHasta || '—'}</div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Vehículo</th>
+              <th>Desde</th>
+              <th>Hasta</th>
+              <th>Estado</th>
+              <th>Precio diario</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>${trs}</tbody>
+        </table>
+        <script>window.onload = () => window.print();</script>
+      </body></html>`
+      const w = window.open('', '_print_reservas_filtradas', 'width=1000,height=700')
+      if (w) { w.document.write(html); w.document.close(); }
+    } catch {}
+  }
+
+  async function actualizarEstadoReserva(id, estado) {
+    setMensaje('')
+    const token = localStorage.getItem('token')
+    if (!token) { setMensaje('Debes iniciar sesión'); return }
+    try {
+      const res = await fetch(`${API_URL}/api/reservas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ estado })
+      })
+      const data = await res.json()
+      if (!res.ok) { setMensaje(data?.error || 'No se pudo actualizar la reserva'); return }
+      await cargar()
+    } catch { setMensaje('Error de red al actualizar reserva') }
+  }
+
   return (
     <div style={{ padding: 16 }}>
       <h1>Panel de administración</h1>
@@ -313,52 +444,33 @@ export default function Admin() {
         </div>
 
         <div style={{ border:'1px solid var(--card-border)', borderRadius:12, padding:16, background:'var(--card-bg)' }}>
-          <h2>Reservas</h2>
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:8, flexWrap:'wrap' }}>
+            <h2 style={{ margin:0 }}>Reservas</h2>
+            <div style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'wrap' }}>
+              <label className="field" style={{ margin:0 }}>
+                <span>Desde</span>
+                <input type="date" value={fDesde} onChange={e=>setFDesde(e.target.value)} />
+              </label>
+              <label className="field" style={{ margin:0 }}>
+                <span>Hasta</span>
+                <input type="date" value={fHasta} onChange={e=>setFHasta(e.target.value)} />
+              </label>
+              <button className="btn-success" onClick={imprimirVisibles}>🖨 Imprimir visibles</button>
+              <button className="btn-success" onClick={imprimirTodasLasReservas}>🖨 Imprimir todas</button>
+            </div>
+          </div>
           <ul style={{ marginTop:12 }}>
-            {reservas.map(r => (
+            {reservasFiltradas().map(r => (
               <li key={r.id} style={{ display:'grid', gridTemplateColumns:'1fr auto', alignItems:'center', gap:8 }}>
                 <span>
                   #{r.id} • Usuario {r.usuario_id} • Vehículo {r.vehiculo_id} • {formatDate(r.fecha_inicio)} → {formatDate(r.fecha_fin)} • {r.estado}
                   {typeof r.total !== 'undefined' ? ` • Total $${Number(r.total).toLocaleString('es-AR')}` : ''}
                 </span>
-                <button className="btn-success" onClick={() => {
-                  const total = typeof r.total !== 'undefined' ? Number(r.total).toLocaleString('es-AR') : '-'
-                  const precio = typeof r.precio_diario !== 'undefined' ? Number(r.precio_diario).toLocaleString('es-AR') : '-'
-                  const html = `<!doctype html><html><head><meta charset=\"utf-8\"><title>Reserva #${r.id}</title>
-                  <style>
-                    :root{--brand:#ff8c00;--accent:#2a9d8f}
-                    body{font-family:Arial,Helvetica,sans-serif;padding:16px;color:#111}
-                    .brand{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-                    .logo{width:28px;height:28px}
-                    .title{font-size:18px;margin:0}
-                    .muted{opacity:0.75;font-size:12px}
-                    table{width:100%;border-collapse:collapse;margin-top:8px}
-                    td{border:1px solid #ddd;padding:6px}
-                    .total td{background:rgba(255,140,0,0.08);font-weight:700}
-                  </style>
-                  </head><body>
-                    <div class=\"brand\">
-                      <svg class=\"logo\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"var(--brand)\"/><path d=\"M7 13h10l-2 4H9l-2-4Zm1.5-2a3.5 3.5 0 1 1 7 0H8.5Z\" fill=\"#fff\"/></svg>
-                      <div>
-                        <h1 class=\"title\">MiProyecto - Comprobante de Reserva</h1>
-                        <div class=\"muted\">Reserva #${r.id}</div>
-                      </div>
-                    </div>
-                    <table>
-                      <tr><td><strong>Usuario</strong></td><td>${r.usuario_id}</td></tr>
-                      <tr><td><strong>Vehículo</strong></td><td>${r.vehiculo_id}</td></tr>
-                      <tr><td><strong>Desde</strong></td><td>${formatDate(r.fecha_inicio)}</td></tr>
-                      <tr><td><strong>Hasta</strong></td><td>${formatDate(r.fecha_fin)}</td></tr>
-                      <tr><td><strong>Estado</strong></td><td>${r.estado}</td></tr>
-                      <tr><td><strong>Precio diario</strong></td><td>$${precio}</td></tr>
-                      <tr class=\"total\"><td><strong>Total</strong></td><td>$${total}</td></tr>
-                    </table>
-                    <script>window.onload = () => window.print();</script>
-                  </body></html>`
-                  const w = window.open('', `_print_reserva_${r.id}`, 'width=800,height=600')
-                  if (w) { w.document.write(html); w.document.close(); }
-                }}>🖨 Imprimir</button>
-                {/* Botón de envío por email removido por solicitud */}
+                <div style={{ display:'flex', gap:8 }}>
+                  <button className="btn-success" onClick={() => actualizarEstadoReserva(r.id, 'confirmada')}>Confirmar</button>
+                  <button className="btn-danger" onClick={() => actualizarEstadoReserva(r.id, 'cancelada')}>Cancelar</button>
+                  <button className="btn-danger" onClick={(e) => eliminarVehiculo(r.id, e.currentTarget)}>Eliminar</button>
+                </div>
               </li>
             ))}
           </ul>

@@ -9,7 +9,6 @@ import usuariosRoutes from './src/router/usuarios.routes.js';
 import vehiculosRoutes from './src/router/vehiculos.routes.js';
 import reservasRoutes from './src/router/reservas.routes.js';
 import authRoutes from './src/router/auth.routes.js';
-import reviewsRoutes from './src/router/reviews.routes.js';
 
 dotenv.config();
 
@@ -104,7 +103,6 @@ import usuariosRoutes from './src/router/usuarios.routes.js';
 import vehiculosRoutes from './src/router/vehiculos.routes.js';
 import reservasRoutes from './src/router/reservas.routes.js';
 import authRoutes from './src/router/auth.routes.js';
-import reviewsRoutes from './src/router/reviews.routes.js';
 
 // Configurar variables de entorno
 dotenv.config();
@@ -127,7 +125,6 @@ app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/vehiculos', vehiculosRoutes);
 app.use('/api/reservas', reservasRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/resenas', reviewsRoutes);
 
 // Manejador de 404 - Ruta no encontrada
 app.use((req, res) => {

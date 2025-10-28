@@ -1,18 +1,14 @@
-import { useNavigate } from "react-router-dom";
 import "./VehiculoCard.css";
 
-export default function VehiculoCard({ vehiculo }) {
+export default function VehiculoCard({ vehiculo, onOpenDescripcion, onOpenReserva }) {
   const { id, marca, modelo, anio, imagen, precio, nombre } = vehiculo || {};
-  const navigate = useNavigate();
-
-  const handleClic = () => {
-    const hasToken = (() => { try { return Boolean(localStorage.getItem('token')) } catch { return false } })();
-    if (!hasToken) {
-      alert('Debes iniciar sesión para ver el detalle');
-      navigate('/cuenta');
-      return;
-    }
-    if (id) navigate(`/vehiculos/${id}`);
+  
+  const handleOpenReserva = () => {
+    onOpenReserva && onOpenReserva(vehiculo);
+  };
+  const handleOpenDescripcion = (e) => {
+    e?.stopPropagation?.();
+    onOpenDescripcion && onOpenDescripcion(vehiculo);
   };
 
   const titulo = (nombre && String(nombre).trim()) || [marca, modelo].filter(Boolean).join(' ').trim() || 'Vehículo';
@@ -25,7 +21,7 @@ export default function VehiculoCard({ vehiculo }) {
     <div
       className="vehiculo-card"
       style={cardStyle} // Aplica el estilo dinámico aquí
-      onClick={handleClic}
+      onClick={handleOpenReserva}
     >
       {/* Puedes eliminar el <img> con clase "vehiculo-fondo" */}
       
@@ -34,7 +30,7 @@ export default function VehiculoCard({ vehiculo }) {
         <p className="vehiculo-precio">${Number(precio).toLocaleString('es-AR')}</p>
       ) : null}
       {anio ? <p className="vehiculo-detalle">Año: {anio}</p> : null}
-      <button className="vehiculo-boton">Ver detalle</button>
+      <button className="vehiculo-boton" onClick={handleOpenDescripcion}>Ver detalle</button>
     </div>
   );
 }

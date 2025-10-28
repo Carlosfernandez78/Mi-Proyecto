@@ -343,7 +343,7 @@ export const crearVehiculo = async (req, res) => {
 export const actualizarVehiculo = async (req, res) => {
   try {
     const id = req.params.id;
-    const { marca, modelo, anio, disponible, imagen, precio } = req.body || {};
+    const { marca, modelo, anio, disponible, imagen, precio, descripcion, combustible, transmision, puertas, color } = req.body || {};
 
     const sets = [];
     const params = [];
@@ -353,6 +353,11 @@ export const actualizarVehiculo = async (req, res) => {
     if (typeof disponible !== 'undefined') { sets.push('disponible = ?'); params.push(disponible ? 1 : 0); }
     if (typeof imagen !== 'undefined') { sets.push('imagen = ?'); params.push(imagen); }
     if (typeof precio !== 'undefined') { sets.push('precio = ?'); params.push(precio); }
+    if (typeof descripcion !== 'undefined') { sets.push('descripcion = ?'); params.push(descripcion); }
+    if (typeof combustible !== 'undefined') { sets.push('combustible = ?'); params.push(combustible || null); }
+    if (typeof transmision !== 'undefined') { sets.push('transmision = ?'); params.push(transmision || null); }
+    if (typeof puertas !== 'undefined') { sets.push('puertas = ?'); params.push(puertas); }
+    if (typeof color !== 'undefined') { sets.push('color = ?'); params.push(color || null); }
 
     if (sets.length === 0) {
       return res.status(400).json({ error: 'No hay campos para actualizar' });

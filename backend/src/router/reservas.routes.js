@@ -62,8 +62,8 @@ router.post(
   [
     body('usuario_id').isInt({ min: 1 }).withMessage('ID de usuario inválido'),
     body('vehiculo_id').isInt({ min: 1 }).withMessage('ID de vehículo inválido'),
-    body('fecha_inicio').isISO8601().toDate().withMessage('Fecha de inicio inválida (formato YYYY-MM-DD)'),
-    body('fecha_fin').isISO8601().toDate().withMessage('Fecha de fin inválida (formato YYYY-MM-DD)'),
+    body('fecha_inicio').matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('Fecha de inicio inválida (YYYY-MM-DD)'),
+    body('fecha_fin').matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('Fecha de fin inválida (YYYY-MM-DD)'),
     body('estado').optional().isString().isIn(['pendiente', 'confirmada', 'cancelada']).withMessage('Estado inválido')
   ],
   validateRequest,
@@ -78,8 +78,8 @@ router.put(
     param('id').isInt({ min: 1 }).withMessage('ID de reserva inválido'),
     body('usuario_id').optional().isInt({ min: 1 }).withMessage('ID de usuario inválido'),
     body('vehiculo_id').optional().isInt({ min: 1 }).withMessage('ID de vehículo inválido'),
-    body('fecha_inicio').optional().isISO8601().toDate().withMessage('Fecha de inicio inválida'),
-    body('fecha_fin').optional().isISO8601().toDate().withMessage('Fecha de fin inválida'),
+    body('fecha_inicio').optional().matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('Fecha de inicio inválida'),
+    body('fecha_fin').optional().matches(/^\d{4}-\d{2}-\d{2}$/).withMessage('Fecha de fin inválida'),
     body('estado').optional().isString().isIn(['pendiente', 'confirmada', 'cancelada']).withMessage('Estado inválido')
   ],
   validateRequest,

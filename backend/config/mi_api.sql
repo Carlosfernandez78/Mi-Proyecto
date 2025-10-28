@@ -28,18 +28,5 @@ CREATE TABLE reservas (
 );
 
 
--- Reseñas de vehículos
-CREATE TABLE IF NOT EXISTS resenas (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  id_usuario INT NOT NULL,
-  id_vehiculo INT NOT NULL,
-  texto_resenia TEXT NULL,
-  calificacion INT NOT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
-  FOREIGN KEY (id_vehiculo) REFERENCES vehiculos(id),
-  CHECK (calificacion >= 1 AND calificacion <= 5)
-);
-
 -- fin de esquema
 

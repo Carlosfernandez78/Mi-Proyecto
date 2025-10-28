@@ -130,7 +130,7 @@ export const crearReserva = async (req, res) => {
 
     // Verificar solapamiento de fechas con reservas no canceladas
     const [solapes] = await pool.query(
-      `SELECT 1 FROM reservas
+      `SELECT id, fecha_inicio, fecha_fin FROM reservas
         WHERE vehiculo_id = ?
           AND estado <> 'cancelada'
           AND NOT (fecha_fin <= ? OR fecha_inicio >= ?)
@@ -144,17 +144,22 @@ export const crearReserva = async (req, res) => {
     // es más precisa si las horas no se especifican.
 
     if (solapes.length > 0) {
-      return res.status(409).json({ error: 'El vehículo no está disponible en el rango solicitado' });
+      const c = solapes[0]
+      return res.status(409).json({ error: 'El vehículo no está disponible en el rango solicitado', conflicto: { id: c.id, fecha_inicio: c.fecha_inicio, fecha_fin: c.fecha_fin } });
     }
 
     // Obtener precio del vehículo
     const [veh] = await pool.query('SELECT precio FROM vehiculos WHERE id = ? LIMIT 1', [vehiculo_id]);
     const precio_diario = Number(veh?.[0]?.precio || 0) || 0;
-    // Calcular días (mínimo 1)
-    const d1 = new Date(fecha_inicio);
-    const d2 = new Date(fecha_fin);
-    const ms = Math.max(0, d2.getTime() - d1.getTime());
-    const dias = Math.max(1, Math.ceil(ms / 86400000));
+    // Calcular días (mínimo 1) evitando TZ: usar UTC de fecha simple
+    function toUTC(ymd) {
+      const [y,m,d] = String(ymd).split('-').map(Number)
+      return Date.UTC(y, (m||1)-1, d||1)
+    }
+    const startUTC = toUTC(fecha_inicio)
+    const endUTC = toUTC(fecha_fin)
+    const diffDays = Math.max(0, Math.round((endUTC - startUTC) / 86400000))
+    const dias = Math.max(1, diffDays + 1) // inclusivo
     const total = Number((dias * precio_diario).toFixed(2));
 
     const [result] = await pool.query(

@@ -326,6 +326,26 @@ body {
   box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.25), 0 0 10px var(--brand-orange-glow1);
 }
 
+/* Contenedor para inputs embebidos (iframe/shadow) que no heredan :focus */
+.auth-input-shell {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background-color: rgba(255,255,255,0.15);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.auth-input-shell:hover {
+  background-color: rgba(255,255,255,0.22);
+  border-color: var(--brand-orange-border);
+}
+.auth-input-shell:focus-within {
+  border-color: var(--brand-orange-border);
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.25), 0 0 10px var(--brand-orange-glow1);
+}
+
 /* Botones de cuenta (registrarse/login) redondeados y contenidos */
 .auth button[type="submit"] {
   width: 100%;
@@ -500,9 +520,23 @@ body {
   border: 1px solid var(--card-border);
   border-radius: 10px;
   background-color: rgba(255,255,255,0.15) !important;
+  background-image: none !important;
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   color: var(--fg);
+}
+
+/* Forzar estilo translúcido dentro de modales */
+.modal-card .select-shell {
+  background-color: rgba(255,255,255,0.15) !important;
+  border: 1px solid var(--card-border) !important;
+}
+.modal-card select.translucent-select {
+  background-color: rgba(255,255,255,0.15) !important;
+  border: 1px solid var(--card-border) !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .translucent-select:hover {

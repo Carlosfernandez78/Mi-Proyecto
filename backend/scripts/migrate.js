@@ -24,6 +24,28 @@ async function addPrecioColumnIfMissing() {
   console.log("Columna 'precio' agregada a 'vehiculos'.");
 }
 
+async function addVehiculoExtraFieldsIfMissing() {
+  const dbName = process.env.DB_NAME;
+  if (!dbName) {
+    console.error("DB_NAME no definido en .env");
+    process.exit(1);
+  }
+  const fields = [
+    { name: 'descripcion', ddl: 'TEXT NULL' },
+    { name: 'combustible', ddl: 'VARCHAR(20) NULL' },
+    { name: 'transmision', ddl: 'VARCHAR(20) NULL' },
+    { name: 'puertas', ddl: 'INT NULL' },
+    { name: 'color', ddl: 'VARCHAR(30) NULL' },
+  ];
+  for (const f of fields) {
+    const exists = await columnExists(dbName, 'vehiculos', f.name);
+    if (!exists) {
+      await pool.query(`ALTER TABLE vehiculos ADD COLUMN ${f.name} ${f.ddl}`);
+      console.log(`Columna '${f.name}' agregada a 'vehiculos'.`);
+    }
+  }
+}
+
 async function addReservaTotalsIfMissing() {
   const dbName = process.env.DB_NAME;
   if (!dbName) {
@@ -45,7 +67,15 @@ async function addReservaTotalsIfMissing() {
 async function main() {
   try {
     await addPrecioColumnIfMissing();
+    await addVehiculoExtraFieldsIfMissing();
     await addReservaTotalsIfMissing();
+    // Eliminar tabla de reseñas si existe (limpieza completa)
+    try {
+      await pool.query('DROP TABLE IF EXISTS resenas');
+      console.log("Tabla 'resenas' eliminada.");
+    } catch (e) {
+      console.warn('No se pudo eliminar tabla resenas:', e?.message || e)
+    }
   } catch (e) {
     console.error("Error en migración:", e?.message || e);
     process.exit(1);
